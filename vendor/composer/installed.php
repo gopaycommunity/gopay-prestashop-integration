@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => 'dev-feature/GPY025-6-update',
-        'version' => 'dev-feature/GPY025-6-update',
-        'reference' => '3363f8933be9a59ac40f265df0817e3fe8841a94',
+        'pretty_version' => 'dev-feature/GPY025-5-major-update',
+        'version' => 'dev-feature/GPY025-5-major-update',
+        'reference' => 'e8b08a27b1d9892694047f92d1e741f33494ce2b',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,18 +11,18 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-feature/GPY025-6-update',
-            'version' => 'dev-feature/GPY025-6-update',
-            'reference' => '3363f8933be9a59ac40f265df0817e3fe8841a94',
+            'pretty_version' => 'dev-feature/GPY025-5-major-update',
+            'version' => 'dev-feature/GPY025-5-major-update',
+            'reference' => 'e8b08a27b1d9892694047f92d1e741f33494ce2b',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'gopay/payments-sdk-php' => array(
-            'pretty_version' => 'v1.4.2',
-            'version' => '1.4.2.0',
-            'reference' => '9ca700bfb373f81d6accbc9e94b9f2ad47a8eb69',
+            'pretty_version' => 'v1.7.0',
+            'version' => '1.7.0.0',
+            'reference' => 'f9baf80cea928e9ea30b5dcdf4c21f1f9e0ef946',
             'type' => 'library',
             'install_path' => __DIR__ . '/../gopay/payments-sdk-php',
             'aliases' => array(),

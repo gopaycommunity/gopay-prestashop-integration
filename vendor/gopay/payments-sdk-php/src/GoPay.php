@@ -2,14 +2,12 @@
 
 namespace GoPay;
 
-use GoPay\Definition\RequestMethods;
 use GoPay\Http\Request;
 use GoPay\Http\JsonBrowser;
 use GoPay\Definition\Language;
 
 class GoPay
 {
-
     const JSON = 'application/json';
     const FORM = 'application/x-www-form-urlencoded';
 
@@ -23,6 +21,9 @@ class GoPay
     {
         $this->config = $config;
         $this->browser = $b;
+        if (array_key_exists('isProductionMode', $this->config)) {
+            $this->browser->getLogger()->log("isProductionMode is deprecated and will be removed, please use gatewayUrl instead");
+        }
     }
 
     public function getConfig($key)
@@ -32,7 +33,7 @@ class GoPay
 
     public function call($urlPath, $contentType, $authorization, $method, $data = null)
     {
-        $r = new Request($this->buildUrl("api/{$urlPath}"));
+        $r = new Request($this->buildUrl($urlPath));
         $r->method = $method;
         $r->headers = $this->buildHeaders($contentType, $authorization);
         $r->body = $this->encodeData($contentType, $data);
@@ -42,17 +43,59 @@ class GoPay
     public function buildUrl($urlPath)
     {
         static $urls = [
-                true => 'https://gate.gopay.cz/',
-                false => 'https://gw.sandbox.gopay.com/'
+            true => 'https://gate.gopay.cz/api',
+            false => 'https://gw.sandbox.gopay.com/api'
         ];
-        return $urls[(bool)$this->getConfig('isProductionMode')] . $urlPath;
+
+        if ($this->isCustomGatewayUrl()) {
+            $apiRoot = rtrim($this->config['gatewayUrl'], '/');
+            if (!$this->strEndsWith($apiRoot, 'api')) {
+                $apiRoot = $apiRoot . '/api';
+            }
+            return $apiRoot . $urlPath;
+        }
+
+        return $urls[$this->isProductionMode()] . $urlPath;
+    }
+
+    public function buildEmbedUrl()
+    {
+        static $urls = [
+            true => 'https://gate.gopay.cz/',
+            false => 'https://gw.sandbox.gopay.com/'
+        ];
+
+        if ($this->isCustomGatewayUrl()) {
+            $urlBase = $this->config['gatewayUrl'];
+            if ($this->strEndsWith($urlBase, 'api')) {
+                $urlBase = substr($urlBase, 0, -3);
+            }
+            return $urlBase . '/gp-gw/js/embed.js';
+        }
+
+        return $urls[$this->isProductionMode()] . '/gp-gw/js/embed.js';
+    }
+
+
+    public function isCustomGatewayUrl()
+    {
+        return array_key_exists('gatewayUrl', $this->config);
+    }
+
+    /**
+     * @deprecated use gatewayUrl
+     */
+    public function isProductionMode()
+    {
+        $productionMode = $this->getConfig('isProductionMode');
+        return filter_var($productionMode, FILTER_VALIDATE_BOOLEAN);
     }
 
     private function encodeData($contentType, $data)
     {
         if ($data) {
             if ($contentType === GoPay::FORM) {
-                return http_build_query($data, null, '&');
+                return http_build_query($data, "", '&');
             }
             return json_encode($data);
         }
@@ -63,16 +106,16 @@ class GoPay
     {
         if (is_null($contentType)) {
             return [
-                    'Accept' => 'application/json',
-                    'Accept-Language' => $this->getAcceptedLanguage(),
-                    'Authorization' => $authorization
+                'Accept' => 'application/json',
+                'Accept-Language' => $this->getAcceptedLanguage(),
+                'Authorization' => $authorization
             ];
         } else {
             return [
-                    'Accept' => 'application/json',
-                    'Accept-Language' => $this->getAcceptedLanguage(),
-                    'Content-Type' => $contentType,
-                    'Authorization' => $authorization
+                'Accept' => 'application/json',
+                'Accept-Language' => $this->getAcceptedLanguage(),
+                'Content-Type' => $contentType,
+                'Authorization' => $authorization
             ];
         }
     }
@@ -81,5 +124,10 @@ class GoPay
     {
         static $czechLike = [Language::CZECH, Language::SLOVAK];
         return in_array($this->getConfig('language'), $czechLike) ? self::LOCALE_CZECH : self::LOCALE_ENGLISH;
+    }
+
+    private function strEndsWith($str, string $end)
+    {
+        return substr($str, -strlen($end)) === $end;
     }
 }

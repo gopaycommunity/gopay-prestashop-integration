@@ -4,29 +4,31 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ea49e3ef4512d2c336245cf41698e25",
+    "content-hash": "f7ca5dabd7824a4ba8f7f39a9836f51e",
     "packages": [
         {
             "name": "gopay/payments-sdk-php",
-            "version": "v1.4.2",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gopaycommunity/gopay-php-api.git",
-                "reference": "9ca700bfb373f81d6accbc9e94b9f2ad47a8eb69"
+                "reference": "f9baf80cea928e9ea30b5dcdf4c21f1f9e0ef946"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gopaycommunity/gopay-php-api/zipball/9ca700bfb373f81d6accbc9e94b9f2ad47a8eb69",
-                "reference": "9ca700bfb373f81d6accbc9e94b9f2ad47a8eb69",
+                "url": "https://api.github.com/repos/gopaycommunity/gopay-php-api/zipball/f9baf80cea928e9ea30b5dcdf4c21f1f9e0ef946",
+                "reference": "f9baf80cea928e9ea30b5dcdf4c21f1f9e0ef946",
                 "shasum": ""
             },
             "require": {
-                "guzzlehttp/guzzle": "^5.3.1|^6.2.1",
-                "php": ">=5.4.0"
+                "guzzlehttp/guzzle": "^6.2.1|7.*",
+                "php": ">=7.4"
             },
             "require-dev": {
                 "hamcrest/hamcrest-php": "*",
-                "phpunit/phpunit": "<6.0"
+                "phpspec/prophecy": "~1.0",
+                "phpspec/prophecy-phpunit": "^2.0",
+                "phpunit/phpunit": "9.3.7"
             },
             "type": "library",
             "autoload": {
@@ -35,7 +37,10 @@
                 ],
                 "psr-4": {
                     "GoPay\\": "src/"
-                }
+                },
+                "classmap": [
+                    "src/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -57,9 +62,9 @@
             ],
             "support": {
                 "issues": "https://github.com/gopaycommunity/gopay-php-api/issues",
-                "source": "https://github.com/gopaycommunity/gopay-php-api/tree/master"
+                "source": "https://github.com/gopaycommunity/gopay-php-api/tree/v1.7.0"
             },
-            "time": "2020-07-02T11:08:47+00:00"
+            "time": "2023-05-17T16:12:51+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
