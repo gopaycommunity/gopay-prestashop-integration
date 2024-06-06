@@ -58,6 +58,11 @@ class PrestashopGopayApi
      */
     public static function auth_gopay(): Payments
     {
+        static $urls = [
+            true => 'https://gate.gopay.cz/',
+            false => 'https://gw.sandbox.gopay.com/'
+        ];
+
         return GoPay\payments([
             'goid' => Configuration::get('PRESTASHOPGOPAY_GOID'),
             'clientId' => Configuration::get('PRESTASHOPGOPAY_CLIENT_ID'),
@@ -66,6 +71,7 @@ class PrestashopGopayApi
             'scope' => GoPay\Definition\TokenScope::ALL,
             'language' => Configuration::get('PRESTASHOPGOPAY_DEFAULT_LANGUAGE'),
             'timeout' => 30,
+            'gatewayUrl' => $urls[!Configuration::get('PRESTASHOPGOPAY_TEST')],
         ]);
     }
 
