@@ -21,6 +21,12 @@ class PrestashopGopayLog
      */
     public static function insert_log(array $log)
     {
+        $encodedLog = $log['log'];
+
+        if (is_string($log['log']) && json_decode($log['log']) === null && json_last_error() !== JSON_ERROR_NONE) {
+            $encodedLog = json_encode($log['log']);
+        }
+
         $table_name = 'gopay_log';
         $data = [
             'order_id' => $log['order_id'],
@@ -28,7 +34,7 @@ class PrestashopGopayLog
             'message' => $log['message'],
             'created_at' => gmdate('Y-m-d H:i:s'),
             'log_level' => $log['log_level'],
-            'log' => json_encode($log['log']),
+            'log' => $encodedLog,
         ];
         $where = "`order_id` = '" . $log['order_id'] .
             "' AND `transaction_id` = '" . $log['transaction_id'] .
