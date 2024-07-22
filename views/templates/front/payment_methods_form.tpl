@@ -20,7 +20,7 @@
                             {assign var="i" value=false}
                         {/if}/>
                 <label for="{$payment_method_code|escape:'htmlall':'UTF-8'}">{l s=$payment_method_name_image['name']|escape:'htmlall':'UTF-8' mod='prestashopgopay'}</label>
-                <img src="{$payment_method_name_image['image']|escape:'htmlall':'UTF-8'}" alt="ico" style="height: auto; width: auto; margin-left: auto;"/>
+                <img src="{$payment_method_name_image['image']|escape:'htmlall':'UTF-8'}" alt="ico" style="height: auto; max-height: 30px; width: auto; margin-left: auto;"/>
             </div>
         {/foreach}
         <script>
