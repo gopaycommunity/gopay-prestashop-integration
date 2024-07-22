@@ -179,7 +179,12 @@ class PrestashopGopayApi
             [
                 'name' => 'id_cart',
                 'value' => $order->id_cart,
-            ], ];
+            ],
+            [   
+                'name' => 'gopay_plugin',
+                'value' => 'gopay-prestashop',
+            ]
+        ];
 
         $language = PrestashopGopayOptions::country_to_language()[$country->iso_code];
         if (!array_key_exists($language, $prestashopGopayOptions->supported_languages())) {
