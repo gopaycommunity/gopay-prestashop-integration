@@ -1,0 +1,23 @@
+name: Create release
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Package plugin
+        run: |
+          mkdir -p prestashopgopay
+          rsync -av --exclude='prestashopgopay' . prestashopgopay/
+          zip -r prestashopgopay-${{ github.ref_name }}.zip prestashopgopay
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: prestashopgopay-${{ github.ref_name }}.zip
+          prerelease: true
