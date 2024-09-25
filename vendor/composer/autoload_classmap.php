@@ -8,9 +8,11 @@ $baseDir = dirname($vendorDir);
 return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'GoPay\\Auth' => $vendorDir . '/gopay/payments-sdk-php/src/Auth.php',
+    'GoPay\\Config' => $vendorDir . '/gopay/payments-sdk-php/src/Config.php',
     'GoPay\\Definition\\Account\\StatementGeneratingFormat' => $vendorDir . '/gopay/payments-sdk-php/src/Definition/Account/StatementGeneratingFormat.php',
     'GoPay\\Definition\\Language' => $vendorDir . '/gopay/payments-sdk-php/src/Definition/Language.php',
     'GoPay\\Definition\\Payment\\BankSwiftCode' => $vendorDir . '/gopay/payments-sdk-php/src/Definition/Payment/BankSwiftCode.php',
+    'GoPay\\Definition\\Payment\\BnplType' => $vendorDir . '/gopay/payments-sdk-php/src/Definition/Payment/BnplType.php',
     'GoPay\\Definition\\Payment\\Currency' => $vendorDir . '/gopay/payments-sdk-php/src/Definition/Payment/Currency.php',
     'GoPay\\Definition\\Payment\\PaymentInstrument' => $vendorDir . '/gopay/payments-sdk-php/src/Definition/Payment/PaymentInstrument.php',
     'GoPay\\Definition\\Payment\\PaymentItemType' => $vendorDir . '/gopay/payments-sdk-php/src/Definition/Payment/PaymentItemType.php',
