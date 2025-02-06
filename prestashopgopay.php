@@ -737,8 +737,8 @@ class PrestaShopGoPay extends PaymentModule
         }
 
         $transaction_id = Db::getInstance()->getValue(
-            "SELECT transaction_id FROM `prestashop`.`ps_order_payment` WHERE order_reference = '" .
-                $order->reference . "';"
+            "SELECT transaction_id FROM `" . _DB_PREFIX_ . "order_payment` WHERE order_reference = '" .
+                pSQL($order->reference) . "';"
         );
 
         $this->context->smarty->assign([
