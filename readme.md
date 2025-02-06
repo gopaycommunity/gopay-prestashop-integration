@@ -49,9 +49,15 @@ Running project on local machine for development and testing purposes.
 ### Prerequisites
 
 - [PHP](https://www.php.net)
-- [PrestaShop](https://www.prestashop.com/) (minimum version 8.0.1)
+- [PrestaShop](https://www.prestashop.com/)
 - [Docker Desktop](https://www.docker.com/get-started)
 - [Docker Compose](https://docs.docker.com/compose/) _(is part of Docker Desktop)_
+
+### Compatibility
+
+The module is compatible with the following versions:
+- **PrestaShop:** v8.0.1 – v8.1.6
+- **PHP:** v8.1 – v8.1  
 
 ### Installation
 
