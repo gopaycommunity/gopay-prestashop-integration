@@ -42,6 +42,14 @@ GoPay payment gateway integration with the PrestaShop eCommerce platform.
 ### 1.0.2
 - Update PrestaShop GoPay gateway module to support latest versions from v8.0.1 to v8.1.6
 
+### 1.0.3
+- Implemented Enhancements and New features:
+    - Expanded payment Options: Added support for additional payment methods.
+    - Improved localization logic: Revised the internal logic handling language selection for payment methods.
+    - Minor visual update: Included updated logos for supported payment providers.
+    - Dependency management: Project now requires manual installation of vendor dependencies.
+    - Documentation: README documentation updated accordingly.
+
 ## Development
 
 Running project on local machine for development and testing purposes.
@@ -67,8 +75,9 @@ For local project execution, first install PrestaShop, then upload and configure
 1. Install the module through the PrestaShop modules screen.
    1. Download it from GitHub and uncompress it.
    2. Rename the folder to have the same name as the main php file “prestashopgopay”.
-   3. Compress the folder again.
-   4. On "Modules and services" click on "Add a new module" and install the GoPay extension.
+   3. Install vendor dependencies using Composer. Run the command `composer install` to add all necessary vendor dependencies.
+   4. Compress the folder again.
+   5. On "Modules and services" click on "Add a new module" and install the GoPay extension.
 2. Activate the module through the modules screen.
 3. Configure the module by providing goid, client id and secret to load the other options (follow these [steps](https://help.gopay.com/en/knowledge-base/gopay-account/gopay-business-account/signing-in-password-reset-activating-and-deactivating-the-payment-gateway/how-to-activate-the-payment-gateway) to activate the payment gateway and get goid, client id and secret).
 4. Finally, choose the options you want to be available in the payment gateway (payment methods and banks must be enabled in your GoPay account).
