@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "gopay/payments-sdk-php",
-            "version": "v1.7.3",
-            "version_normalized": "1.7.3.0",
+            "version": "1.10.1",
+            "version_normalized": "1.10.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gopaycommunity/gopay-php-api.git",
-                "reference": "2643a053c66ab82efda019154a0c63c156452f48"
+                "reference": "c9382b0c6457a1ce55453b7ccd1099390e75bfdc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gopaycommunity/gopay-php-api/zipball/2643a053c66ab82efda019154a0c63c156452f48",
-                "reference": "2643a053c66ab82efda019154a0c63c156452f48",
+                "url": "https://api.github.com/repos/gopaycommunity/gopay-php-api/zipball/c9382b0c6457a1ce55453b7ccd1099390e75bfdc",
+                "reference": "c9382b0c6457a1ce55453b7ccd1099390e75bfdc",
                 "shasum": ""
             },
             "require": {
@@ -26,7 +26,7 @@
                 "phpspec/prophecy-phpunit": "^2.0",
                 "phpunit/phpunit": "9.3.7"
             },
-            "time": "2023-09-20T12:02:41+00:00",
+            "time": "2024-09-24T07:45:10+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -60,7 +60,7 @@
             ],
             "support": {
                 "issues": "https://github.com/gopaycommunity/gopay-php-api/issues",
-                "source": "https://github.com/gopaycommunity/gopay-php-api/tree/v1.7.3"
+                "source": "https://github.com/gopaycommunity/gopay-php-api/tree/1.10.1"
             },
             "install-path": "../gopay/payments-sdk-php"
         },

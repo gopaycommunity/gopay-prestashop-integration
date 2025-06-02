@@ -60,9 +60,11 @@ class ComposerStaticInit72a682984a7e199a4d9a7a4724de0320
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'GoPay\\Auth' => __DIR__ . '/..' . '/gopay/payments-sdk-php/src/Auth.php',
+        'GoPay\\Config' => __DIR__ . '/..' . '/gopay/payments-sdk-php/src/Config.php',
         'GoPay\\Definition\\Account\\StatementGeneratingFormat' => __DIR__ . '/..' . '/gopay/payments-sdk-php/src/Definition/Account/StatementGeneratingFormat.php',
         'GoPay\\Definition\\Language' => __DIR__ . '/..' . '/gopay/payments-sdk-php/src/Definition/Language.php',
         'GoPay\\Definition\\Payment\\BankSwiftCode' => __DIR__ . '/..' . '/gopay/payments-sdk-php/src/Definition/Payment/BankSwiftCode.php',
+        'GoPay\\Definition\\Payment\\BnplType' => __DIR__ . '/..' . '/gopay/payments-sdk-php/src/Definition/Payment/BnplType.php',
         'GoPay\\Definition\\Payment\\Currency' => __DIR__ . '/..' . '/gopay/payments-sdk-php/src/Definition/Payment/Currency.php',
         'GoPay\\Definition\\Payment\\PaymentInstrument' => __DIR__ . '/..' . '/gopay/payments-sdk-php/src/Definition/Payment/PaymentInstrument.php',
         'GoPay\\Definition\\Payment\\PaymentItemType' => __DIR__ . '/..' . '/gopay/payments-sdk-php/src/Definition/Payment/PaymentItemType.php',

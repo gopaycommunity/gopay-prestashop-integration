@@ -199,6 +199,8 @@ class PrestashopGopayOptions
             'PAYSAFECARD' => ['key' => 'PAYSAFECARD', 'name' => $module->l('PaySafeCard coupon', get_class($this))],
             'BITCOIN' => ['key' => 'BITCOIN', 'name' => $module->l('Bitcoin wallet', get_class($this))],
             'CLICK_TO_PAY' => ['key' => 'CLICK_TO_PAY', 'name' => $module->l('Click to Pay', get_class($this))],
+            'TWISTO' => ['key' => 'TWISTO', 'name' => $module->l('Twisto', get_class($this))],
+            'SKIPPAY' => ['key' => 'SKIPPAY', 'name' => $module->l('Skip Pay', get_class($this))],
         ];
 
         $option_payment_methods = Configuration::get('OPTION_GOPAY_PAYMENT_METHODS');
