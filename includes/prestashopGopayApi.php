@@ -179,7 +179,12 @@ class PrestashopGopayApi
             [
                 'name' => 'id_cart',
                 'value' => $order->id_cart,
-            ], ];
+            ],
+            [   
+                'name' => 'gopay_plugin',
+                'value' => 'gopay-prestashop',
+            ]
+        ];
 
         $language = PrestashopGopayOptions::country_to_language()[$country->iso_code];
         if (!array_key_exists($language, $prestashopGopayOptions->supported_languages())) {
@@ -297,16 +302,26 @@ class PrestashopGopayApi
     {
         $gopay = self::auth_gopay();
 
+        $language_id = Configuration::get('PS_LANG_DEFAULT');
+        $language = new Language($language_id);
+        
+        // Get the ISO code of language
+        $language_code = $language->iso_code;
+
         $payment_methods = [];
         $banks = [];
-        $enabledPayments = $gopay->getPaymentInstruments(Configuration::get('PRESTASHOPGOPAY_GOID'), $currency);
+        $enabledPayments = $gopay->getPaymentInstruments(Configuration::get('PRESTASHOPGOPAY_GOID'), $currency . '?lang=' . $language_code);
 
         if ($enabledPayments->statusCode == 200 && isset($enabledPayments->json['enabledPaymentInstruments'])) {
+            // Determine if the specified language code exists in the response
+            $paymentInstrument = reset($enabledPayments->json['enabledPaymentInstruments']);
+            $language_code = isset($paymentInstrument['label'][$language_code]) ? $language_code : 'cs';
+
             foreach ($enabledPayments->json['enabledPaymentInstruments'] as $key => $paymentMethod) {
                 $payment_methods[$paymentMethod['paymentInstrument']
                 ] = [
                     'label' => PrestaShopGoPay::getInstanceByName(
-                        'prestashopgopay')->l($paymentMethod['label']['cs']),
+                        'prestashopgopay')->l($paymentMethod['label'][$language_code]),
                     'image' => $paymentMethod['image']['normal'],
                 ];
 
@@ -314,7 +329,7 @@ class PrestashopGopayApi
                     foreach ($paymentMethod['enabledSwifts'] as $_ => $bank) {
                         $banks[$bank['swift']] = [
                             'label' => PrestaShopGoPay::getInstanceByName(
-                                'prestashopgopay')->l($bank['label']['cs']),
+                                'prestashopgopay')->l($bank['label'][$language_code]),
                             'country' => $bank['swift'] != 'OTHERS' ? substr($bank['swift'], 4, 2) : '',
                             'image' => $bank['image']['normal'], ];
                     }
