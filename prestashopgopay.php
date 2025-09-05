@@ -593,26 +593,6 @@ class PrestaShopGoPay extends PaymentModule
                             ],
                             'placeholder' => $this->l('Select Available Banks...'),
                         ],
-                        [
-                            'type' => 'switch',
-                            'label' => $this->l('Payment retry payment method'),
-                            'name' => 'PRESTASHOPGOPAY_PAYMENT_RETRY',
-                            'is_bool' => true,
-                            'desc' => $this->l('If enabled, payment retry of a failed payment will be done
-							using the same payment method that was selected when customer was placing an order.'),
-                            'values' => [
-                                [
-                                    'id' => 'active_on',
-                                    'value' => true,
-                                    'label' => $this->l('Enabled'),
-                                ],
-                                [
-                                    'id' => 'active_off',
-                                    'value' => false,
-                                    'label' => $this->l('Disabled'),
-                                ],
-                            ],
-                        ],
                     ],
                     'submit' => [
                         'title' => $this->l('Save'),
@@ -710,7 +690,6 @@ class PrestaShopGoPay extends PaymentModule
                 json_decode(Configuration::get('PRESTASHOPGOPAY_PAYMENT_METHODS')) : [],
             'PRESTASHOPGOPAY_BANKS[]' => is_string(Configuration::get('PRESTASHOPGOPAY_BANKS')) ?
                 json_decode(Configuration::get('PRESTASHOPGOPAY_BANKS')) : [],
-            'PRESTASHOPGOPAY_PAYMENT_RETRY' => Configuration::get('PRESTASHOPGOPAY_PAYMENT_RETRY'),
         ];
     }
 
