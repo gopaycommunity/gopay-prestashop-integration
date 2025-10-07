@@ -50,6 +50,10 @@ GoPay payment gateway integration with the PrestaShop eCommerce platform.
     - Dependency management: Project now requires manual installation of vendor dependencies.
     - Documentation: README documentation updated accordingly.
 
+### 1.0.4
+- Remove the Retry Payment option in the settings of GoPay gateway module.
+- The module supports PrestaShop up to version 8.2.3.
+
 ## Development
 
 Running project on local machine for development and testing purposes.
@@ -64,8 +68,8 @@ Running project on local machine for development and testing purposes.
 ### Compatibility
 
 The module is compatible with the following versions:
-- **PrestaShop:** v8.0.1 – v8.1.6
-- **PHP:** v8.1 – v8.1  
+- **PrestaShop:** v8.0.1 – v8.2.3
+- **PHP:** v8.1 – v8.1
 
 ### Installation
 
