@@ -41,7 +41,7 @@ class PrestaShopGoPay extends PaymentModule
     {
         $this->name = 'prestashopgopay';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.4';
+        $this->version = '1.0.5';
         $this->author = 'GoPay';
         $this->need_instance = 1;
         $this->ps_versions_compliancy = [
