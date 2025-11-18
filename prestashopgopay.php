@@ -472,14 +472,6 @@ class PrestaShopGoPay extends PaymentModule
                         ],
                         [
                             'type' => 'text',
-                            'label' => $this->l('GoId'),
-                            'name' => 'PRESTASHOPGOPAY_GOID',
-                            'size' => 50,
-                            'required' => true,
-                            'placeholder' => $this->l('Insert Your GoID...'),
-                        ],
-                        [
-                            'type' => 'text',
                             'label' => $this->l('Client Id'),
                             'name' => 'PRESTASHOPGOPAY_CLIENT_ID',
                             'size' => 50,
@@ -493,6 +485,14 @@ class PrestaShopGoPay extends PaymentModule
                             'size' => 50,
                             'required' => true,
                             'placeholder' => $this->l('Insert Your GoPay Client Secret Token...'),
+                        ],
+                        [
+                            'type' => 'text',
+                            'label' => $this->l('GoId'),
+                            'name' => 'PRESTASHOPGOPAY_GOID',
+                            'size' => 50,
+                            'required' => true,
+                            'placeholder' => $this->l('Insert Your GoID...'),
                         ],
                         [
                             'type' => 'switch',
@@ -612,14 +612,6 @@ class PrestaShopGoPay extends PaymentModule
                 'input' => [
                     [
                         'type' => 'text',
-                        'label' => $this->l('GoId'),
-                        'name' => 'PRESTASHOPGOPAY_GOID',
-                        'size' => 50,
-                        'required' => true,
-                        'placeholder' => $this->l('Insert Your GoID...'),
-                    ],
-                    [
-                        'type' => 'text',
                         'label' => $this->l('Client Id'),
                         'name' => 'PRESTASHOPGOPAY_CLIENT_ID',
                         'size' => 50,
@@ -633,6 +625,14 @@ class PrestaShopGoPay extends PaymentModule
                         'size' => 50,
                         'required' => true,
                         'placeholder' => $this->l('Insert Your GoPay Client Secret Token...'),
+                    ],
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('GoId'),
+                        'name' => 'PRESTASHOPGOPAY_GOID',
+                        'size' => 50,
+                        'required' => true,
+                        'placeholder' => $this->l('Insert Your GoID...'),
                     ],
                     [
                         'type' => 'switch',
