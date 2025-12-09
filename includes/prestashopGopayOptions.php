@@ -165,12 +165,24 @@ class PrestashopGopayOptions
      */
     public function supported_shipping_methods(): array
     {
-        $cookie = Context::getContext()->cookie;
+        $context = Context::getContext();
         $module = Module::getInstanceByName('prestashopgopay');
 
+        $carriers_raw = Carrier::getCarriers(
+            (int) $context->language->id,
+            true, // active only
+            false,
+            false,
+            null,
+            Carrier::ALL_CARRIERS
+        );
+
         $carriers = [];
-        foreach (Carrier::getCarriers((int) $cookie->id_lang, true) as $key => $carrier_info) {
-            $carriers[] = ['key' => $carrier_info['id_carrier'], 'name' => $module->l($carrier_info['name'], get_class($this))];
+        foreach ($carriers_raw as $carrier_info) {
+            $carriers[] = [
+                'key'  => $carrier_info['id_carrier'],
+                'name' => $module->l($carrier_info['name'], get_class($this)),
+            ];
         }
 
         return $carriers;
