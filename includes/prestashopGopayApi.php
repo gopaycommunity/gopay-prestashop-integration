@@ -175,6 +175,9 @@ class PrestashopGopayApi
             ];
         }
 
+        $module = Module::getInstanceByName('prestashopgopay');
+        $version = $module->version ?? '';
+
         $additional_params = [
             [
                 'name' => 'id_cart',
@@ -182,7 +185,7 @@ class PrestashopGopayApi
             ],
             [   
                 'name' => 'gopay_plugin',
-                'value' => 'gopay-prestashop',
+                'value' => 'gopay-prestashop-' . $version,
             ]
         ];
 
