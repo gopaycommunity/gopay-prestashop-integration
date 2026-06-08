@@ -62,7 +62,7 @@ class PrestaShopGoPay extends PaymentModule
         if (!$this->isRegisteredInHook('displayOrderDetail')) {
             $this->registerHook('displayOrderDetail');
         }
-        if (!$this->isRegisteredInHook('payment')) {
+        if (version_compare(_PS_VERSION_, '8.0', '<') && !$this->isRegisteredInHook('payment')) {
             $this->registerHook('payment');
         }
         if (!$this->isRegisteredInHook('displayAdminAfterHeader')) {
@@ -244,15 +244,20 @@ class PrestaShopGoPay extends PaymentModule
 
         $this->create_log_table();
 
-        return parent::install() &&
+        $installed = parent::install() &&
             $this->registerHook('paymentOptions') &&
             $this->registerHook('displayOrderConfirmation') &&
             $this->registerHook('actionOrderStatusUpdate') &&
             $this->registerHook('actionProductCancel') &&
             $this->registerHook('actionOrderSlipAdd') &&
-            $this->registerHook('payment') &&
             $this->registerHook('displayAdminAfterHeader') &&
             $this->registerHook('displayCheckoutSummaryTop');
+
+        if ($installed && version_compare(_PS_VERSION_, '8.0', '<')) {
+            $installed = $this->registerHook('payment');
+        }
+
+        return $installed;
     }
 
     /**
@@ -375,8 +380,8 @@ class PrestaShopGoPay extends PaymentModule
         $helper->name_controller = $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->currentIndex = AdminController::$currentIndex . '&' . http_build_query(
-            ['configure' => $this->name]
-        );
+                ['configure' => $this->name]
+            );
         $helper->submit_action = 'submit' . $this->name;
         $helper->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
 
@@ -717,7 +722,7 @@ class PrestaShopGoPay extends PaymentModule
 
         $transaction_id = Db::getInstance()->getValue(
             "SELECT transaction_id FROM `" . _DB_PREFIX_ . "order_payment` WHERE order_reference = '" .
-                pSQL($order->reference) . "';"
+            pSQL($order->reference) . "';"
         );
 
         $this->context->smarty->assign([
@@ -1045,7 +1050,7 @@ class PrestaShopGoPay extends PaymentModule
 
         Db::getInstance()->executeS(
             'DELETE FROM `' . _DB_PREFIX_ . "order_slip_detail` WHERE id_order_slip = '" .
-                $order_slip_id . "';"
+            $order_slip_id . "';"
         );
 
         foreach ($quantities as $id => $quantity) {
