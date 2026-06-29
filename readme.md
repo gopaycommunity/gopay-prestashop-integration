@@ -33,14 +33,24 @@ GoPay payment gateway integration with the PrestaShop eCommerce platform.
 - [Composer](https://getcomposer.org/)
 
 ## Changelog
-### 1.0.0
-- PrestaShop and GoPay gateway integration.
 
-### 1.0.1
-- Fix of discount amount
+### 1.0.8
+- Supports PrestaShop up to version 9.1.4
 
-### 1.0.2
-- Update PrestaShop GoPay gateway module to support latest versions from v8.0.1 to v8.1.6
+### 1.0.7
+- Supports PrestaShop up to version 9.1.3
+
+### 1.0.6
+- Reordered GoPay credentials in settings
+- Gateway now fully supports shipping when using [Packeta](https://github.com/Zasilkovna/prestashop) module
+- Supports PrestaShop up to version 9.0.2
+
+### 1.0.5
+- The module now supports PrestaShop up to version 9.0.1.
+
+### 1.0.4
+- Remove the Retry Payment option in the settings of GoPay gateway module.
+- The module supports PrestaShop up to version 8.2.3.
 
 ### 1.0.3
 - Implemented Enhancements and New features:
@@ -50,20 +60,15 @@ GoPay payment gateway integration with the PrestaShop eCommerce platform.
     - Dependency management: Project now requires manual installation of vendor dependencies.
     - Documentation: README documentation updated accordingly.
 
-### 1.0.4
-- Remove the Retry Payment option in the settings of GoPay gateway module.
-- The module supports PrestaShop up to version 8.2.3.
+### 1.0.2
+- Update PrestaShop GoPay gateway module to support latest versions from v8.0.1 to v8.1.6
 
-### 1.0.5
-- The module now supports PrestaShop up to version 9.0.1.
+### 1.0.1
+- Fix of discount amount
 
-### 1.0.6
-- Reordered GoPay credentials in settings
-- Gateway now fully supports shipping when using [Packeta](https://github.com/Zasilkovna/prestashop) module
-- Supports PrestaShop up to version 9.0.2
+### 1.0.0
+- PrestaShop and GoPay gateway integration.
 
-### 1.0.7
-- Supports PrestaShop up to version 9.1.3
 
 ## Development
 
@@ -79,7 +84,7 @@ Running project on local machine for development and testing purposes.
 ### Compatibility
 
 The module is compatible with the following versions:
-- **PrestaShop:** v8.0.1 – v9.1.3
+- **PrestaShop:** v8.0.1 – v9.1.4
 - **PHP:** v8.1 or later
 
 ### Installation
