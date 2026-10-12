@@ -34,6 +34,9 @@ GoPay payment gateway integration with the PrestaShop eCommerce platform.
 
 ## Changelog
 
+### 1.0.9
+- Supports PrestaShop up to version 9.2.0
+
 ### 1.0.8
 - Supports PrestaShop up to version 9.1.4
 
@@ -84,7 +87,7 @@ Running project on local machine for development and testing purposes.
 ### Compatibility
 
 The module is compatible with the following versions:
-- **PrestaShop:** v8.0.1 – v9.1.4
+- **PrestaShop:** v8.0.1 – v9.2.0
 - **PHP:** v8.1 or later
 
 ### Installation
