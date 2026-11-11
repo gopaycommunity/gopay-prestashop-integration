@@ -1532,6 +1532,7 @@ class PrestaShopGoPay extends PaymentModule
             $this->context->smarty->assign([
                 'action' => $this->context->link->getModuleLink($this->name, 'paymentRetry', [], true),
                 'order_id' => $order->id,
+                'order_key' => $order->secure_key,
                 'is_retry' => $is_retry,
                 'payment_methods_form' => _PS_MODULE_DIR_ . $this->name . '/views/templates/front/payment_methods_form.tpl',
             ]);

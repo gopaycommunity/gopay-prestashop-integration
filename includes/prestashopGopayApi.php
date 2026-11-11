@@ -83,14 +83,20 @@ class PrestashopGopayApi
      * @param Order $order order
      * @param string $gopay_payment_method order detail
      * @param string $moduleId module id
-     * @param string $url URL of the payment page
+     * @param string $return_url URL the customer returns to from the gateway
+     * @param string $notification_url URL GoPay calls server-to-server on payment state change
      *
      * @return Response
      *
      * @since 1.0.0
      */
-    public static function create_payment(Order $order, string $gopay_payment_method, string $moduleId, string $url): Response
-    {
+    public static function create_payment(
+        Order $order,
+        string $gopay_payment_method,
+        string $moduleId,
+        string $return_url,
+        string $notification_url
+    ): Response {
         $prestashopGopayOptions = new PrestashopGopayOptions();
 
         $gopay = self::auth_gopay();
@@ -112,9 +118,6 @@ class PrestashopGopayApi
         }
 
         $items = self::get_items($products);
-
-        $notification_url = $url;
-        $return_url = $url;
 
         $callback = [
             'return_url' => $return_url,
@@ -227,40 +230,52 @@ class PrestashopGopayApi
     /**
      * Check payment status
      *
-     * @param string $order_id
-     * @param string $GoPay_Transaction_id
+     * Called from the return URL (customer's browser) and from the notification URL (GoPay server).
+     * The order state is changed only if the payment belongs to the order. The order confirmation
+     * (with the customer's secure key) is shown only to the order's owner.
+     *
+     * @param int $order_id order id from the callback URL
+     * @param string $transaction_id GoPay payment id from the callback URL
+     * @param bool $is_notification true for the GoPay notification
      *
      * @since  1.0.0
      */
-    public static function check_payment_status(string $order_id, string $GoPay_Transaction_id)
+    public static function check_payment_status(int $order_id, string $transaction_id, bool $is_notification = false)
     {
-        $order = new Order((int) $order_id);
+        $order = new Order($order_id);
+        if (!Validate::isLoadedObject($order) || $order->module !== 'prestashopgopay' || !ctype_digit($transaction_id)) {
+            self::end_callback($is_notification);
+        }
+
         $gopay = self::auth_gopay();
-        $response = $gopay->getStatus($GoPay_Transaction_id);
+        $response = $gopay->getStatus($transaction_id);
+        $currency = new Currency($order->id_currency);
+        $valid = 200 == $response->statusCode &&
+            (int) $response->json['order_number'] === (int) $order->id &&
+            $response->json['currency'] === $currency->iso_code;
 
         // Save log.
         $log = [
             'order_id' => $order->id,
-            'transaction_id' => 200 == $response->statusCode ? $response->json['id'] : $GoPay_Transaction_id,
-            'message' => 200 == $response->statusCode ? 'Checking payment status' :
-                'Error checking payment status',
-            'log_level' => 200 == $response->statusCode ? 'INFO' : 'ERROR',
+            'transaction_id' => (int) $transaction_id,
+            'message' => $valid ? 'Checking payment status' : 'Error checking payment status',
+            'log_level' => $valid ? 'INFO' : 'ERROR',
             'log' => $response,
         ];
         PrestashopGopayLog::insert_log($log);
 
-        $state = '';
-        if ($response->statusCode == 200) {
-            $state = $response->json['state'];
+        if (!$valid) {
+            self::end_callback($is_notification);
         }
 
-        switch ($state) {
+        $payment_error = false;
+        switch ($response->json['state']) {
             case 'PAID':
                 $order->setCurrentState((int) Configuration::get('PS_OS_WS_PAYMENT'));
 
                 $order_payments = OrderPayment::getByOrderReference($order->reference);
                 foreach ($order_payments as $order_payment) {
-                    $order_payment->transaction_id = $GoPay_Transaction_id;
+                    $order_payment->transaction_id = $transaction_id;
                     $order_payment->save();
                 }
 
@@ -276,8 +291,7 @@ class PrestashopGopayApi
             case 'TIMEOUTED':
             case 'CANCELED':
                 $order->setCurrentState((int) Configuration::get('PS_OS_ERROR'));
-
-                Tools::redirect('order?payment-error=yes');
+                $payment_error = true;
 
                 break;
             case 'REFUNDED':
@@ -286,9 +300,39 @@ class PrestashopGopayApi
                 break;
         }
 
+        // GoPay expects only HTTP 200 for the notification.
+        if ($is_notification) {
+            exit;
+        }
+
+        // Show the order confirmation only to the order's owner.
+        if ((int) Context::getContext()->customer->id !== (int) $order->id_customer) {
+            Tools::redirect('index.php?controller=guest-tracking');
+        }
+
+        if ($payment_error) {
+            Tools::redirect('order?payment-error=yes');
+        }
+
         Tools::redirect('index.php?controller=order-confirmation&id_cart=' . (int) $order->id_cart . '&id_module=' .
             (int) PrestaShopGoPay::getInstanceByName('prestashopgopay')->id . '&id_order=' .
             $order->id . '&key=' . $order->getCustomer()->secure_key);
+    }
+
+    /**
+     * End an invalid callback without changing the order
+     *
+     * @param bool $is_notification true for the GoPay notification
+     *
+     * @since  1.0.10
+     */
+    private static function end_callback(bool $is_notification)
+    {
+        if ($is_notification) {
+            exit;
+        }
+
+        Tools::redirect('index.php?controller=order&step=1');
     }
 
     /**

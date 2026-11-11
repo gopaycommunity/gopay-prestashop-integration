@@ -71,15 +71,17 @@ class PrestaShopGoPayPaymentModuleFrontController extends ModuleFrontController
         $this->context->cart->delete();
         $this->context->cookie->id_cart = $dup['cart']->id;
 
-        $url = $this->context->link->getModuleLink(
+        $params = ['payment-method' => 'GoPay_gateway', 'order-id' => $order->id];
+        $return_url = $this->context->link->getModuleLink('prestashopgopay', 'payment', $params);
+        $notification_url = $this->context->link->getModuleLink(
             'prestashopgopay',
             'payment',
-            ['payment-method' => 'GoPay_gateway', 'order-id' => $order->id]
+            $params + ['notification' => 1]
         );
         $response = PrestashopGopayApi::create_payment($order, array_key_exists(
             'gopay_payment_method',
             $_REQUEST
-        ) ? $_REQUEST['gopay_payment_method'] : '', $this->module->id, $url);
+        ) ? $_REQUEST['gopay_payment_method'] : '', $this->module->id, $return_url, $notification_url);
 
         // Save log.
         $log = [
@@ -126,10 +128,12 @@ class PrestaShopGoPayPaymentModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
-        if (array_key_exists('id', $_REQUEST) &&
-            array_key_exists('payment-method', $_REQUEST) &&
-            $_REQUEST['payment-method'] == 'GoPay_gateway') {
-            PrestashopGopayApi::check_payment_status($_REQUEST['order-id'], $_REQUEST['id']);
+        if (Tools::getValue('payment-method') === 'GoPay_gateway' && Tools::getIsset('id')) {
+            PrestashopGopayApi::check_payment_status(
+                (int) Tools::getValue('order-id'),
+                (string) Tools::getValue('id'),
+                (bool) Tools::getValue('notification')
+            );
         }
     }
 }

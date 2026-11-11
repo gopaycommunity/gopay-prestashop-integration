@@ -29,16 +29,16 @@ class PrestashopGopayLog
 
         $table_name = 'gopay_log';
         $data = [
-            'order_id' => $log['order_id'],
-            'transaction_id' => $log['transaction_id'],
+            'order_id' => (int) $log['order_id'],
+            'transaction_id' => (int) $log['transaction_id'],
             'message' => $log['message'],
             'created_at' => gmdate('Y-m-d H:i:s'),
             'log_level' => $log['log_level'],
             'log' => $encodedLog,
         ];
-        $where = "`order_id` = '" . $log['order_id'] .
-            "' AND `transaction_id` = '" . $log['transaction_id'] .
-            "' AND `message` = '" . $log['message'] . "'";
+        $where = '`order_id` = ' . (int) $log['order_id'] .
+            ' AND `transaction_id` = ' . (int) $log['transaction_id'] .
+            " AND `message` = '" . pSQL($log['message']) . "'";
 
         $response = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow(
             'SELECT * FROM `' . _DB_PREFIX_ . $table_name . '` WHERE ' . $where);

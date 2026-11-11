@@ -19,8 +19,14 @@ class PrestaShopGoPayPaymentRetryModuleFrontController extends ModuleFrontContro
      */
     public function initContent()
     {
-        $order_id = Tools::getValue('order_id');
-        $order = new Order($order_id);
+        $order = new Order((int) Tools::getValue('order_id'));
+
+        // Only the order's owner may retry: the form carries the order's secure key (see hookDisplayOrderDetail).
+        if (!Validate::isLoadedObject($order) || $order->module !== 'prestashopgopay' || $order->hasBeenPaid() ||
+            !hash_equals((string) $order->secure_key, (string) Tools::getValue('key'))) {
+            Tools::redirect('index.php?controller=history');
+        }
+
         $customer = new Customer($order->id_customer);
 
         if ($order->id_customer == 0 || $order->id_address_delivery == 0 ||
@@ -59,10 +65,13 @@ class PrestaShopGoPayPaymentRetryModuleFrontController extends ModuleFrontContro
             }
         }
 
-        $url = $this->context->link->getModuleLink('prestashopgopay', 'paymentRetry',
-            ['payment-method' => 'GoPay_gateway', 'order-id' => $order->id]);
+        $params = ['payment-method' => 'GoPay_gateway', 'order-id' => $order->id];
+        $return_url = $this->context->link->getModuleLink('prestashopgopay', 'paymentRetry', $params);
+        $notification_url = $this->context->link->getModuleLink('prestashopgopay', 'paymentRetry',
+            $params + ['notification' => 1]);
         $response = PrestashopGopayApi::create_payment($order, array_key_exists('gopay_payment_method',
-            $_REQUEST) ? $_REQUEST['gopay_payment_method'] : $default_payment_instrument, $this->module->id, $url);
+            $_REQUEST) ? $_REQUEST['gopay_payment_method'] : $default_payment_instrument, $this->module->id,
+            $return_url, $notification_url);
 
         // Save log.
         $log = [
@@ -104,10 +113,12 @@ class PrestaShopGoPayPaymentRetryModuleFrontController extends ModuleFrontContro
      */
     public function postProcess()
     {
-        if (array_key_exists('id', $_REQUEST) &&
-            array_key_exists('payment-method', $_REQUEST) &&
-            $_REQUEST['payment-method'] == 'GoPay_gateway') {
-            PrestashopGopayApi::check_payment_status($_REQUEST['order-id'], $_REQUEST['id']);
+        if (Tools::getValue('payment-method') === 'GoPay_gateway' && Tools::getIsset('id')) {
+            PrestashopGopayApi::check_payment_status(
+                (int) Tools::getValue('order-id'),
+                (string) Tools::getValue('id'),
+                (bool) Tools::getValue('notification')
+            );
         }
     }
 }
