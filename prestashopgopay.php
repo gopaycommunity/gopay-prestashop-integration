@@ -284,24 +284,23 @@ class PrestaShopGoPay extends PaymentModule
      */
     protected function postProcess()
     {
-        $form_values = Tools::getAllValues();
-
-        foreach (array_keys($form_values) as $key) {
-            if (strpos($key, 'PRESTASHOPGOPAY_ORDER_PAYMENT_NAME_') === 0) {
+        // Save only the fields of the form that was displayed (without credentials it has only 4 fields).
+        // The payment name (html input) is multilingual and is saved separately below.
+        foreach ($this->getConfigForm()['form']['input'] as $input) {
+            if ($input['type'] === 'html') {
                 continue;
             }
-            if (is_array(Tools::getValue($key))) {
-                Configuration::updateValue($key, json_encode(Tools::getValue($key)));
-
-                continue;
-            }
-            Configuration::updateValue($key, Tools::getValue($key));
+            $key = rtrim($input['name'], '[]');
+            $value = empty($input['multiple']) ?
+                Tools::getValue($key) :
+                json_encode(Tools::getValue($key) ?: []);
+            Configuration::updateValue($key, $value);
         }
 
         $payment_names = [];
         foreach (Language::getLanguages(false) as $language) {
             $field = 'PRESTASHOPGOPAY_ORDER_PAYMENT_NAME_' . (int) $language['id_lang'];
-            if (array_key_exists($field, $form_values)) {
+            if (Tools::getIsset($field)) {
                 $payment_names[(int) $language['id_lang']] = trim(strip_tags((string) Tools::getValue($field)));
             }
         }
@@ -310,52 +309,28 @@ class PrestaShopGoPay extends PaymentModule
         }
 
         if (
-            !array_key_exists('PRESTASHOPGOPAY_GOID', $form_values) ||
-            empty($form_values['PRESTASHOPGOPAY_GOID']) ||
-            !array_key_exists('PRESTASHOPGOPAY_CLIENT_ID', $form_values) ||
-            empty($form_values['PRESTASHOPGOPAY_CLIENT_ID']) ||
-            !array_key_exists('PRESTASHOPGOPAY_CLIENT_SECRET', $form_values) ||
-            empty($form_values['PRESTASHOPGOPAY_CLIENT_SECRET'])
+            empty(Configuration::get('PRESTASHOPGOPAY_GOID')) ||
+            empty(Configuration::get('PRESTASHOPGOPAY_CLIENT_ID')) ||
+            empty(Configuration::get('PRESTASHOPGOPAY_CLIENT_SECRET'))
         ) {
             Configuration::updateValue('PRESTASHOPGOPAY_ENABLED', false);
 
             return $this->displayError($this->l(
                 'Inform goid, client id and secret to enable GoPay payment gateway and load the other options'
             ));
-        } else {
-            if (array_key_exists('PRESTASHOPGOPAY_TEST', $form_values)) {
-                $gopay = PrestashopGopayApi::auth_gopay();
+        }
 
-                $response = $gopay->getPaymentInstruments(
-                    Configuration::get('PRESTASHOPGOPAY_GOID'),
-                    'CZK'
-                );
-                if (!$response->hasSucceed()) {
-                    $response = $gopay->getPaymentInstruments(
-                        Configuration::get('PRESTASHOPGOPAY_GOID'),
-                        'CZK'
-                    );
-                    if (
-                        array_key_exists('errors', $response->json) &&
-                        $response->json['errors'][0]['error_name'] == 'INVALID'
-                    ) {
-                        Configuration::updateValue('PRESTASHOPGOPAY_GOID', '');
-                    }
+        // Invalid credentials are kept so they can be corrected, the gateway is disabled.
+        $gopay = PrestashopGopayApi::auth_gopay();
+        if (!$gopay->getAuth()->authorize()->response->hasSucceed()) {
+            Configuration::updateValue('PRESTASHOPGOPAY_ENABLED', false);
 
-                    $response = $gopay->getAuth()->authorize()->response;
-                    if (
-                        array_key_exists('errors', $response->json) &&
-                        $response->json['errors'][0]['error_name'] == 'AUTH_WRONG_CREDENTIALS'
-                    ) {
-                        Configuration::updateValue('PRESTASHOPGOPAY_CLIENT_ID', '');
-                        Configuration::updateValue('PRESTASHOPGOPAY_CLIENT_SECRET', '');
-                    }
+            return $this->displayError($this->l('Wrong Client ID and/or Client Secret.'));
+        }
+        if (!$gopay->getPaymentInstruments(Configuration::get('PRESTASHOPGOPAY_GOID'), 'CZK')->hasSucceed()) {
+            Configuration::updateValue('PRESTASHOPGOPAY_ENABLED', false);
 
-                    return $this->displayError($this->l(
-                        'Wrong GoID and/or credentials. Please provide valid GoID, Client ID and Client Secret.'
-                    ));
-                }
-            }
+            return $this->displayError($this->l('Wrong GoID.'));
         }
 
         return $this->displayConfirmation($this->l('Settings updated'));
