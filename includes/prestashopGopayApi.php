@@ -26,30 +26,6 @@ class PrestashopGopayApi
     }
 
     /**
-     * Decode GoPay response and add raw body if
-     * different from json property
-     *
-     * @param Response $response
-     *
-     * @since  1.0.0
-     */
-    private static function decode_response(Response $response): Response
-    {
-        $not_identical = (json_decode($response->__toString(), true) != $response->json) ||
-            (empty($response->__toString()) != empty($response->json));
-
-        if ($not_identical) {
-            $response->{'raw_body'} = filter_var(str_replace(
-                '\n',
-                ' ',
-                $response->__toString()
-            ), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        }
-
-        return $response;
-    }
-
-    /**
      * GoPay authentication
      *
      * @return Payments object
@@ -220,7 +196,7 @@ class PrestashopGopayApi
 
         $response = $gopay->createPayment($data);
 
-        return self::decode_response($response);
+        return $response;
     }
 
     /**
@@ -382,7 +358,7 @@ class PrestashopGopayApi
         $gopay = self::auth_gopay();
         $response = $gopay->refundPayment($transaction_id, $amount);
 
-        return self::decode_response($response);
+        return $response;
     }
 
     /**
@@ -397,6 +373,6 @@ class PrestashopGopayApi
         $gopay = self::auth_gopay();
         $response = $gopay->getStatus($transaction_id);
 
-        return self::decode_response($response);
+        return $response;
     }
 }

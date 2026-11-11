@@ -954,9 +954,11 @@ class PrestaShopGoPay extends PaymentModule
                     $success = true;
 
                     break;
+                default:
+                    return '';
             }
 
-            unset($_REQUEST['paypal_partial_refund_successful']);
+            unset($_REQUEST['gopay_refund']);
 
             $this->context->smarty->assign(['success' => $success, 'message' => $message]);
 

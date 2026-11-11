@@ -9,10 +9,11 @@
  */
 class AdminPrestaShopGoPayLogController extends ModuleAdminController
 {
+    /** @var string */
+    protected $db_log_table = 'gopay_log';
+
     public function __construct()
     {
-        $this->db_log_table = 'gopay_log';
-
         parent::__construct();
     }
 
