@@ -53,24 +53,6 @@ class PrestaShopGoPay extends PaymentModule
         parent::__construct();
 
         $this->init();
-        if (!$this->isRegisteredInHook('actionProductCancel')) {
-            $this->registerHook('actionProductCancel');
-        }
-        if (!$this->isRegisteredInHook('actionOrderSlipAdd')) {
-            $this->registerHook('actionOrderSlipAdd');
-        }
-        if (!$this->isRegisteredInHook('displayOrderDetail')) {
-            $this->registerHook('displayOrderDetail');
-        }
-        if (version_compare(_PS_VERSION_, '8.0', '<') && !$this->isRegisteredInHook('payment')) {
-            $this->registerHook('payment');
-        }
-        if (!$this->isRegisteredInHook('displayAdminAfterHeader')) {
-            $this->registerHook('displayAdminAfterHeader');
-        }
-        if (!$this->isRegisteredInHook('displayCheckoutSummaryTop')) {
-            $this->registerHook('displayCheckoutSummaryTop');
-        }
 
         $this->displayName = $this->l('PrestaShop GoPay gateway');
         $this->description = $this->l('PrestaShop and GoPay payment gateway integration');
@@ -251,7 +233,8 @@ class PrestaShopGoPay extends PaymentModule
             $this->registerHook('actionProductCancel') &&
             $this->registerHook('actionOrderSlipAdd') &&
             $this->registerHook('displayAdminAfterHeader') &&
-            $this->registerHook('displayCheckoutSummaryTop');
+            $this->registerHook('displayCheckoutSummaryTop') &&
+            $this->registerHook('displayOrderDetail');
 
         if ($installed && version_compare(_PS_VERSION_, '8.0', '<')) {
             $installed = $this->registerHook('payment');
