@@ -34,6 +34,15 @@ GoPay payment gateway integration with the PrestaShop eCommerce platform.
 
 ## Changelog
 
+### 1.0.11
+- Payment return and notification verify that the payment belongs to the order
+- Order confirmation after the payment return is shown only to the order's owner
+- Payment retry requires the order's secure key
+- Wrong credentials disable the gateway and are no longer cleared
+- Settings form saves only its own fields
+- All hooks are registered on install (upgrade script for existing installations)
+- PHP 8.2+ deprecation fixes
+
 ### 1.0.10
 - Supports PrestaShop up to version 9.2.1
 - Customer's cart is now emptied after a successful payment. 

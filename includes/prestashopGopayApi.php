@@ -324,7 +324,7 @@ class PrestashopGopayApi
      *
      * @param bool $is_notification true for the GoPay notification
      *
-     * @since  1.0.10
+     * @since  1.0.11
      */
     private static function end_callback(bool $is_notification)
     {
