@@ -52,7 +52,7 @@ class PrestaShopGoPayPaymentModuleFrontController extends ModuleFrontController
             (int) $cart->id,
             (int) Configuration::get('GOPAY_OS_WAITING'),
             (float) $cart->getOrderTotal(true, Cart::BOTH),
-            $this->module->displayName,
+            $this->module->getOrderPaymentName((int) $this->context->language->id),
             null,
             null,
             (int) $currency->id,

@@ -224,6 +224,31 @@ class PrestashopGopayApi
     }
 
     /**
+     * Empty the customer's cart after a successful payment.
+     * Before redirecting to GoPay the module duplicates the cart (so the
+     * customer keeps the products if the payment fails); this removes
+     * that copy once the order is paid.
+     *
+     * @param Order $order
+     */
+    private static function empty_customer_cart(Order $order)
+    {
+        $context = Context::getContext();
+
+        if (isset($context->cart) && Validate::isLoadedObject($context->cart)
+            && (int) $context->cart->id !== (int) $order->id_cart
+            && (int) $context->cart->id_customer === (int) $order->id_customer
+            && !$context->cart->orderExists()) {
+            $context->cart->delete();
+        }
+
+        if (isset($context->cookie) && isset($context->cookie->id_cart)) {
+            unset($context->cookie->id_cart);
+            $context->cookie->write();
+        }
+    }
+
+    /**
      * Check payment status
      *
      * @param string $order_id
@@ -263,6 +288,8 @@ class PrestashopGopayApi
                     $order_payment->save();
                 }
 
+                self::empty_customer_cart($order);
+
                 break;
             case 'PAYMENT_METHOD_CHOSEN':
             case 'AUTHORIZED':
@@ -282,9 +309,6 @@ class PrestashopGopayApi
 
                 break;
         }
-
-        $cart = new Cart($order->id_cart);
-        $cart->delete();
 
         Tools::redirect('index.php?controller=order-confirmation&id_cart=' . (int) $order->id_cart . '&id_module=' .
             (int) PrestaShopGoPay::getInstanceByName('prestashopgopay')->id . '&id_order=' .

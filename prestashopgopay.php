@@ -304,12 +304,26 @@ class PrestaShopGoPay extends PaymentModule
         $form_values = Tools::getAllValues();
 
         foreach (array_keys($form_values) as $key) {
+            if (strpos($key, 'PRESTASHOPGOPAY_ORDER_PAYMENT_NAME_') === 0) {
+                continue;
+            }
             if (is_array(Tools::getValue($key))) {
                 Configuration::updateValue($key, json_encode(Tools::getValue($key)));
 
                 continue;
             }
             Configuration::updateValue($key, Tools::getValue($key));
+        }
+
+        $payment_names = [];
+        foreach (Language::getLanguages(false) as $language) {
+            $field = 'PRESTASHOPGOPAY_ORDER_PAYMENT_NAME_' . (int) $language['id_lang'];
+            if (array_key_exists($field, $form_values)) {
+                $payment_names[(int) $language['id_lang']] = trim(strip_tags((string) Tools::getValue($field)));
+            }
+        }
+        if (!empty($payment_names)) {
+            Configuration::updateValue('PRESTASHOPGOPAY_ORDER_PAYMENT_NAME', $payment_names);
         }
 
         if (
@@ -474,6 +488,13 @@ class PrestaShopGoPay extends PaymentModule
                             //							'desc'        => $this->l(
                             //								'Description of the payment method that is displayed at the checkout' ),
                             'placeholder' => $this->l('Insert Description...'),
+                        ],
+                        [
+                            'type' => 'html',
+                            'label' => $this->l('Payment name in orders'),
+                            'name' => 'PRESTASHOPGOPAY_ORDER_PAYMENT_NAME',
+                            'html_content' => $this->renderPaymentNameField(),
+                            'desc' => $this->l('Name of the payment saved to new orders (column Payment in the order list and in the order detail). If empty, the module name is used.'),
                         ],
                         [
                             'type' => 'text',
@@ -664,6 +685,55 @@ class PrestaShopGoPay extends PaymentModule
                 ],
             ],
         ];
+    }
+
+    /**
+     * Input for the payment name: one text field per language
+     * and a native select to switch between languages
+     *
+     * @return string
+     */
+    protected function renderPaymentNameField(): string
+    {
+        $languages = Language::getLanguages(false);
+        $values = [];
+        foreach ($languages as $language) {
+            $values[(int) $language['id_lang']] = (string) Configuration::get(
+                'PRESTASHOPGOPAY_ORDER_PAYMENT_NAME',
+                (int) $language['id_lang']
+            );
+        }
+
+        $this->context->smarty->assign([
+            'gopay_field_name' => 'PRESTASHOPGOPAY_ORDER_PAYMENT_NAME',
+            'gopay_languages' => $languages,
+            'gopay_values' => $values,
+            'gopay_default_lang' => (int) Configuration::get('PS_LANG_DEFAULT'),
+            'gopay_placeholder' => $this->displayName,
+        ]);
+
+        return $this->context->smarty->fetch(_PS_MODULE_DIR_ . $this->name . '/views/templates/admin/payment_name_field.tpl');
+    }
+
+    /**
+     * Payment name saved to orders (Order::$payment, OrderPayment::$payment_method).
+     * Falls back to the default language value, then to the module display name.
+     *
+     * @param int $id_lang language of the order
+     *
+     * @return string
+     */
+    public function getOrderPaymentName(int $id_lang): string
+    {
+        $name = (string) Configuration::get('PRESTASHOPGOPAY_ORDER_PAYMENT_NAME', $id_lang);
+        if ($name === '') {
+            $name = (string) Configuration::get(
+                'PRESTASHOPGOPAY_ORDER_PAYMENT_NAME',
+                (int) Configuration::get('PS_LANG_DEFAULT')
+            );
+        }
+
+        return $name !== '' ? $name : $this->displayName;
     }
 
     /**
@@ -951,7 +1021,7 @@ class PrestaShopGoPay extends PaymentModule
             $amount = 0;
             $amount_shipping = 0;
 
-            if ($payments[0]->payment_method == 'PrestaShop GoPay gateway') {
+            if ($order->module == 'prestashopgopay') {
                 // Amount shipping
                 if (array_key_exists('shipping', $cancel) && $cancel['shipping'] == 1) {
                     $amount_shipping += $order->total_shipping;
@@ -1087,7 +1157,7 @@ class PrestaShopGoPay extends PaymentModule
         if ($order->getOrderPaymentCollection()->count() > 0) {
             $payments = $order->getOrderPayments();
 
-            if ($payments[0]->payment_method == 'PrestaShop GoPay gateway') {
+            if ($order->module == 'prestashopgopay') {
                 $amount = 0;
                 $amount_shipping = 0;
                 $refund_values = [];
@@ -1215,7 +1285,7 @@ class PrestaShopGoPay extends PaymentModule
             }
         }
 
-        if ($payments[0]->payment_method == 'PrestaShop GoPay gateway') {
+        if ($order->module == 'prestashopgopay') {
             // Amount shipping
             $order_slips = $order->getOrderSlipsCollection();
             $amount_shipping = $order->total_shipping_tax_incl;
